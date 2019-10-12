@@ -1,6 +1,6 @@
 [submodule "app/src/main/jni/serval-dna"]
 	path = app/src/main/jni/serval-dna
-	url = ../serval-dna.git
+	url = https://github.com/servalproject/serval-dna.git
 [submodule "app/src/main/jni/libsodium"]
 	path = app/src/main/jni/libsodium
-	url = ../libsodium.git
+	url = https://github.com/servalproject/libsodium.git
