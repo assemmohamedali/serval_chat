@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- For Wifi-Aware -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- Bluetooth transport -->
@@ -20,6 +21,11 @@
 
     <!-- Wifi hotspot -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <!-- Wifi Hotspot for android 8 & 9 -->
+    <permission android:name="android.permission.OVERRIDE_WIFI_CONFIG" android:protectionLevel="signature|privileged" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!--
  Custom phone book integration
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -56,17 +62,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".navigation.Id1"
-                  android:taskAffinity="org.servalproject.id1"
-                  android:windowSoftInputMode="stateHidden" />
+            android:taskAffinity="org.servalproject.id1"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".navigation.Id2"
-                  android:taskAffinity="org.servalproject.id2"
-                  android:windowSoftInputMode="stateHidden" />
+            android:taskAffinity="org.servalproject.id2"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".navigation.Id3"
-                  android:taskAffinity="org.servalproject.id3"
-                  android:windowSoftInputMode="stateHidden" />
+            android:taskAffinity="org.servalproject.id3"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".navigation.Id4"
-                  android:taskAffinity="org.servalproject.id4"
-                  android:windowSoftInputMode="stateHidden" />
+            android:taskAffinity="org.servalproject.id4"
+            android:windowSoftInputMode="stateHidden" />
 
         <service android:name=".ForegroundService" android:enabled="true"/>
 

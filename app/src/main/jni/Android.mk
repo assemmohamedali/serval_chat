@@ -7,6 +7,12 @@ endif
 ifeq ($(SODIUM_ARCH_FOLDER),x86)
         SODIUM_ARCH_FOLDER = i686
 endif
+ifeq ($(SODIUM_ARCH_FOLDER),x86_64)
+        SODIUM_ARCH_FOLDER = westmere
+endif
+ifeq ($(SODIUM_ARCH_FOLDER),arm64-v8a)
+        SODIUM_ARCH_FOLDER = armv8-a
+endif
 
 SODIUM_BASE := libsodium/libsodium-android-$(SODIUM_ARCH_FOLDER)
 SODIUM_INCLUDE := $(LOCAL_PATH)/$(SODIUM_BASE)/include
