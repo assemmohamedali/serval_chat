@@ -99,6 +99,7 @@ public class Networks implements Observer<NetworkInfo> {
 		observers.onReset();
 	}
 
+	// Get called when the user changed the UI Toggle button (NetworkList UI)
 	@Override
 	public void updated(NetworkInfo obj) {
 		observers.onUpdate(obj);
@@ -106,16 +107,18 @@ public class Networks implements Observer<NetworkInfo> {
 		if (obj == wifiClient || obj == wifiHotspot) {
 			// if the user fiddles with wifi && we need to fix hotspot config
 			// make sure we try to finish what they started
+
 			NetworkInfo.State state = obj.getState();
 			WifiGoal newGoal = null;
 			if (state == NetworkInfo.State.Stopping && goal == null) {
 				newGoal = WifiGoal.Off;
 			} else if (state == NetworkInfo.State.Starting) {
-				if (obj == wifiClient)
+				if (obj == wifiClient && state == NetworkInfo.State.Off)
 					newGoal = WifiGoal.ClientOn;
 				else if (obj == wifiHotspot && goal == null)
 					newGoal = WifiGoal.HotspotOn;
 			}
+
 			if (newGoal != null && goal != newGoal)
 				setWifiGoal(newGoal);
 			else
@@ -152,8 +155,7 @@ public class Networks implements Observer<NetworkInfo> {
 	void setWifiGoal(WifiGoal goal){
 		if (this.goal == goal)
 			return;
-		if (wifiHotspot == null
-				&& (goal == WifiGoal.HotspotOn || goal == WifiGoal.HotspotOnServalConfig))
+		if (wifiHotspot == null && (goal == WifiGoal.HotspotOn || goal == WifiGoal.HotspotOnServalConfig))
 			throw new IllegalStateException();
 		this.goal = goal;
 		Log.v(TAG, "Changed goal to "+goal);
@@ -175,6 +177,7 @@ public class Networks implements Observer<NetworkInfo> {
 			if (wifiHotspot == null)
 				return false;
 
+			// should restore the old configuration of the hotspot
 			boolean shouldRestore = wifiHotspot.saved!=null && wifiHotspot.isServalConfig();
 			if (shouldRestore)
 				wifiHotspot.restoring = true;
@@ -255,6 +258,7 @@ public class Networks implements Observer<NetworkInfo> {
 								return;
 
 							case Off:
+								// To open hotspot, Check if hotspot configuration can be changed otherwise use the phone's config
 								if (wifiHotspot.isServalConfig() != goalIsServal)
 									config = goalIsServal ? wifiHotspot.servalConfiguration : wifiHotspot.saved;
 								Log.v(TAG, "Enabling hotspot" + (config == null ? "" : " and changing config"));
@@ -262,6 +266,7 @@ public class Networks implements Observer<NetworkInfo> {
 								break;
 
 							case On:
+								// Disable hotspot if it already opened to change configurations otherwise nothing changed!
 								if (wifiHotspot.isServalConfig() != goalIsServal) {
 									Log.v(TAG, "Disabling hotspot to change config");
 									wifiHotspot.setWifiApEnabled(null, false);

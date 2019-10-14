@@ -11,6 +11,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.util.Log;
 
 import org.servalproject.servaldna.IJniServer;
 import org.servalproject.servaldna.ServalDCommand;
@@ -123,6 +124,7 @@ public class Server extends BroadcastReceiver implements IJniServer, Runnable, H
 				am.cancel(alarmIntent);
 				alarmIntent = null;
 			}
+
 		}
 	}
 
@@ -172,6 +174,7 @@ public class Server extends BroadcastReceiver implements IJniServer, Runnable, H
 		cpuLock.acquire();
 		serverTid = android.os.Process.myTid();
 		wakeAt = 0;
+
 
 		ServalDCommand.server(this, "", null);
 

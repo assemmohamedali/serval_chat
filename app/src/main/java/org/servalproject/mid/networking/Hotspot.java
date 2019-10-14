@@ -277,6 +277,7 @@ public class Hotspot extends NetworkInfo {
 		return super.getStatus(context);
 	}
 
+	// Get called from UI to open Hotspot
 	@Override
 	public void enable(Context context) {
 		if (Build.VERSION.SDK_INT >= 23){
@@ -291,6 +292,7 @@ public class Hotspot extends NetworkInfo {
 		Networks.getInstance().setWifiGoal(useConfig ? Networks.WifiGoal.HotspotOnServalConfig : Networks.WifiGoal.HotspotOn);
 	}
 
+	// Get called from UI to close Hotspot
 	@Override
 	public void disable(Context context) {
 		if (Build.VERSION.SDK_INT >= 23) {
