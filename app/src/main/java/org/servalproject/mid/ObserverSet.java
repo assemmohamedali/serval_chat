@@ -52,6 +52,7 @@ public class ObserverSet<T> implements Handler.Callback, IObserverSet<T> {
 		backgroundObservers.remove(observer);
 	}
 
+
 	public void onUpdate() {
 		if (!UIobservers.isEmpty())
 			UIhandler.sendEmptyMessage(this, UICallbacks);
@@ -73,6 +74,7 @@ public class ObserverSet<T> implements Handler.Callback, IObserverSet<T> {
 				return false;
 		}
 		for (Observer<T> observer : observers)
+			// every class who implements Observer<T> will have this function to update
 			observer.updated(obj);
 		return true;
 	}

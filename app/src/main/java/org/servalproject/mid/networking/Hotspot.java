@@ -52,6 +52,7 @@ public class Hotspot extends NetworkInfo {
 		if (saved == null)
 			saved = readProfile(profileName);
 
+		// Every time setState called, Observer being updated to notify for changing (onUpdate in ObserverSet)
 		setState(getWifiApState());
 	}
 
@@ -232,6 +233,7 @@ public class Hotspot extends NetworkInfo {
 		ed.apply();
 	}
 
+	// This function called from WifiHotspotChanges class if state changed
 	void onStateChanged(Intent intent) {
 		testUserConfig();
 		setState(statusToState(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1)));

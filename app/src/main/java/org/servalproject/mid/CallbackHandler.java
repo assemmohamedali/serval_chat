@@ -32,6 +32,7 @@ public class CallbackHandler extends Handler {
 	public void sendEmptyMessage(Callback callback, int what){
 		Message msg = obtainMessage(what, callback);
 		sendMessage(msg);
+
 	}
 
 	public <T> void sendMessage(MessageHandler<T> h, T obj, int what) {

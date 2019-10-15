@@ -51,6 +51,7 @@ public class Serval {
 				interfaces.put(prop, value);
 		}
 
+		// all observers handled inside this thread
 		HandlerThread handlerThread = new HandlerThread("BackgroundHandler");
 		handlerThread.start();
 		backgroundHandler = new CallbackHandler(handlerThread.getLooper());

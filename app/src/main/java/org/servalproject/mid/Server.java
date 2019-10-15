@@ -166,6 +166,7 @@ public class Server extends BroadcastReceiver implements IJniServer, Runnable, H
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WAKE_INTENT);
 		context.registerReceiver(this, filter);
+		// onServer started, this will call onStart() method in Networks as well
 		observers.onUpdate();
 	}
 

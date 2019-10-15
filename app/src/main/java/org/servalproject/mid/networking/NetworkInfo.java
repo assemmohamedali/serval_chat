@@ -32,11 +32,13 @@ public abstract class NetworkInfo {
 		}
 	}
 
+	// observers for each of network [WIFI - BL - Hotspot]
 	public final ObserverSet<NetworkInfo> observers;
 	protected final Serval serval;
 
 	public NetworkInfo(Serval serval){
 		this.serval = serval;
+		// according to this, to add on this observer background you have to implements Observer<NetworkInfo> in your class
 		observers = new ObserverSet<>(serval, this);
 	}
 
@@ -76,6 +78,7 @@ public abstract class NetworkInfo {
 			return;
 		Log.v(TAG, getName(serval.context)+" changed to "+state);
 		this.state = state;
+		// call onUpdate function on ObserverSet class
 		observers.onUpdate();
 	}
 

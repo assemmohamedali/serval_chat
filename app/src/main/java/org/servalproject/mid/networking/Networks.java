@@ -25,10 +25,16 @@ public class Networks implements Observer<NetworkInfo> {
 	public final WifiClient wifiClient;
 	public final Hotspot wifiHotspot;
 	public WifiAware wifiAware;
+	// list of observers for network info [WIFI - BL - Hotstpo]
 	public final ListObserverSet<NetworkInfo> observers;
 	final FlightModeObserver flightModeObserver;
 
 	private Networks(Serval serval){
+		/*
+		 * 3 types of observers
+		 * Server serval.server.observers
+		 * BLE/WIFI/Hotspot ex. wifiClient.observers.addBackground();
+		 */
 		this.serval = serval;
 		observers = new ListObserverSet<>(serval);
 		this.wifiClient = new WifiClient(serval);
@@ -46,9 +52,12 @@ public class Networks implements Observer<NetworkInfo> {
 			}
 		});
 	}
-
+	// Called after initializing a server
 	private void onStart(){
+
+		// observers is like tasks to be processed by a thread,
 		wifiClient.observers.addBackground(this);
+
 		if (wifiHotspot!=null)
 			wifiHotspot.observers.addBackground(this);
 
@@ -99,7 +108,7 @@ public class Networks implements Observer<NetworkInfo> {
 		observers.onReset();
 	}
 
-	// Get called when the user changed the UI Toggle button (NetworkList UI)
+	// Get called when state changed
 	@Override
 	public void updated(NetworkInfo obj) {
 		observers.onUpdate(obj);
