@@ -76,36 +76,12 @@
 
         <service android:name=".ForegroundService" android:enabled="true"/>
 
-        <receiver
-            android:name="org.servalproject.mid.networking.WifiNetworkChanges"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
 
         <receiver
-            android:name="org.servalproject.mid.networking.WifiHotspotChanges"
+            android:name="org.servalproject.mid.networking.GlobalReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_AP_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
 
-        <receiver
-            android:name="org.servalproject.mid.networking.bluetooth.BluetoothNetworkChanges"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.bluetooth.device.action.FOUND" />
-                <action android:name="android.bluetooth.device.action.NAME_CHANGED" />
-                <action android:name="android.bluetooth.adapter.action.DISCOVERY_STARTED" />
-                <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
-                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
-                <action android:name="android.bluetooth.adapter.action.SCAN_MODE_CHANGED" />
-            </intent-filter>
         </receiver>
 
         <provider

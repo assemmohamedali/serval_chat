@@ -16,12 +16,16 @@ import org.servalproject.servaldna.AbstractExternalInterface;
 import org.servalproject.servaldna.ChannelSelector;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
+
+import static android.bluetooth.BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
 
 /**
  * Created by jeremy on 9/02/15.
@@ -42,15 +46,13 @@ public class BlueToothControl extends AbstractExternalInterface {
 	static final UUID SECURE_UUID = UUID.fromString("85d832c2-b7e9-4166-a65f-695b925485aa");
 	static final UUID INSECURE_UUID = UUID.fromString("4db52983-2c1b-454e-a8ba-e8fb4ae59eeb");
 
-	public static BlueToothControl getBlueToothControl(
-			Serval serval,
-			ChannelSelector selector,
-			int loopbackMdpPort) {
+	public static BlueToothControl getBlueToothControl(Serval serval, ChannelSelector selector, int loopbackMdpPort) {
 		BluetoothAdapter a;
 		if (Build.VERSION.SDK_INT>=18) {
+			// Bluetooth Low Energy
 			BluetoothManager bm = (BluetoothManager)serval.context.getSystemService(Context.BLUETOOTH_SERVICE);
 			a = bm.getAdapter();
-		}else
+		}else // Normal BL
 			a = BluetoothAdapter.getDefaultAdapter();
 		if (a == null) return null;
 
@@ -65,10 +67,7 @@ public class BlueToothControl extends AbstractExternalInterface {
 		}
 	}
 
-	private BlueToothControl(final Serval serval,
-							 ChannelSelector selector,
-							 int loopbackMdpPort,
-							 BluetoothAdapter a) throws IOException {
+	private BlueToothControl(final Serval serval, ChannelSelector selector, int loopbackMdpPort, BluetoothAdapter a) throws IOException {
 		super(selector, loopbackMdpPort);
 		this.serval = serval;
 		adapter = a;
@@ -240,8 +239,25 @@ public class BlueToothControl extends AbstractExternalInterface {
 	public void onStateChange(Intent intent) {
 		// on / off etc
 		setState(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
-		if (adapter.isEnabled())
-			serval.runOnThreadPool(up);
+
+		if (!isDiscoverable() && isEnabled())
+		{
+			try {
+				Method method = adapter.getClass().getMethod("setScanMode", int.class, int.class);
+				method.invoke(adapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 3600);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} finally {
+				serval.runOnThreadPool(up);
+			}
+		}
+
+		/*if (adapter.isEnabled())
+			serval.runOnThreadPool(up);*/
 	}
 
 	// pull the interface up / down
@@ -254,14 +270,14 @@ public class BlueToothControl extends AbstractExternalInterface {
 	}
 
 	public boolean isDiscoverable() {
-		return isEnabled() && adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE;
+		return /*isEnabled() &&*/ adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE;
 	}
 
 	public boolean isEnabled() {
 		return adapter.isEnabled();
 	}
 
-	public void requestDiscoverable(Context context) {
+	/*public void requestDiscoverable(Context context) {
 		if (isDiscoverable())
 			return;
 
@@ -269,10 +285,14 @@ public class BlueToothControl extends AbstractExternalInterface {
 			// snack?
 			return;
 		}
-		Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+		// Set BL to be discovered by others
+		Intent discoverableIntent = new Intent(ACTION_REQUEST_DISCOVERABLE);
 		discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3600);
 		context.startActivity(discoverableIntent);
-	}
+
+
+
+	}*/
 
 	private Queue<Connector> queue = new LinkedList<>();
 	public synchronized void queue(Connector item){

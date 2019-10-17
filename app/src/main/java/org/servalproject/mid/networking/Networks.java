@@ -1,6 +1,11 @@
 package org.servalproject.mid.networking;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -9,6 +14,7 @@ import org.servalproject.mid.Observer;
 import org.servalproject.mid.Serval;
 import org.servalproject.mid.Server;
 import org.servalproject.mid.networking.bluetooth.BlueToothControl;
+import org.servalproject.mid.networking.receivers.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +22,11 @@ import java.util.List;
 /**
  * Created by jeremy on 2/11/16.
  */
-public class Networks implements Observer<NetworkInfo> {
+public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 
 	public final List<NetworkInfo> networks = new ArrayList<>();
 	private static final String TAG = "Networks";
+	private static final String WIFI_AP_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_AP_STATE_CHANGED";
 	public BlueToothControl blueTooth;
 	private final Serval serval;
 	public final WifiClient wifiClient;
@@ -37,6 +44,7 @@ public class Networks implements Observer<NetworkInfo> {
 		 */
 		this.serval = serval;
 		observers = new ListObserverSet<>(serval);
+		Session.setmGlobalReceiverCallback(this);
 		this.wifiClient = new WifiClient(serval);
 		this.wifiHotspot = Hotspot.getHotspot(serval);
 
@@ -111,6 +119,7 @@ public class Networks implements Observer<NetworkInfo> {
 	// Get called when state changed
 	@Override
 	public void updated(NetworkInfo obj) {
+		// to update UI as well
 		observers.onUpdate(obj);
 
 		if (obj == wifiClient || obj == wifiHotspot) {
@@ -132,6 +141,37 @@ public class Networks implements Observer<NetworkInfo> {
 				setWifiGoal(newGoal);
 			else
 				progressToGoal();
+		}
+	}
+
+	@Override
+	public void onCallBackReceived(Context context, Intent intent) {
+		String action = intent.getAction();
+		switch(action) {
+			case WifiManager.WIFI_STATE_CHANGED_ACTION:
+				wifiClient.onStateChanged(intent);
+				break;
+			case WIFI_AP_STATE_CHANGED_ACTION:
+				wifiHotspot.onStateChanged(intent);
+				break;
+			case BluetoothDevice.ACTION_FOUND:
+				blueTooth.onFound(intent);
+				break;
+			case BluetoothDevice.ACTION_NAME_CHANGED:
+				blueTooth.onRemoteNameChanged(intent);
+				break;
+			case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+				blueTooth.scanner.onDiscoveryStarted();
+				break;
+			case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+				blueTooth.scanner.onDiscoveryFinished();
+				break;
+			case BluetoothAdapter.ACTION_STATE_CHANGED:
+				blueTooth.onStateChange(intent);
+				break;
+			case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
+				blueTooth.scanner.onScanModeChanged(intent);
+				break;
 		}
 	}
 

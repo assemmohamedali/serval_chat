@@ -57,6 +57,7 @@ public class Serval {
 		backgroundHandler = new CallbackHandler(handlerThread.getLooper());
 
 		backgroundQueue = new SynchronousQueue<>();
+		// Group of worker thread, FIFO Structure
 		backgroundThreads = new ThreadPoolExecutor(3, Integer.MAX_VALUE, 5, TimeUnit.SECONDS, backgroundQueue);
 
 		server = new Server(this, context);
@@ -162,6 +163,7 @@ public class Serval {
 	public final Identities identities;
 	public final SharedPreferences settings;
 	private final BlockingQueue<Runnable> backgroundQueue;
+	// Group of worker thread, FIFO Structure
 	private final ThreadPoolExecutor backgroundThreads;
 	private String restfulUsername = "ServalDClient";
 	private String restfulPassword;

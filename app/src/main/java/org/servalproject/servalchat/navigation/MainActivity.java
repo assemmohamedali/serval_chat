@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements IContainerView, M
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		app = (App)getApplication();
+		app = (App) getApplication();
 		imm = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
 		serval = Serval.getInstance();
 
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements IContainerView, M
 			if (extras != null && extras.size() > 0) {
 				// assume everything is fine...
 				savedInstanceState = extras;
+
 			}
 		}
 

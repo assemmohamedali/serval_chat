@@ -6,6 +6,7 @@ import android.util.Log;
 
 import org.servalproject.mid.ObserverSet;
 import org.servalproject.mid.Serval;
+import org.servalproject.mid.networking.receivers.Session;
 import org.servalproject.servalchat.R;
 
 /**

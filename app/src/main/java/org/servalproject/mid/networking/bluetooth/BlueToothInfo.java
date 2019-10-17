@@ -1,12 +1,16 @@
 package org.servalproject.mid.networking.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
+import android.util.Log;
 
 import org.servalproject.mid.Serval;
+import org.servalproject.mid.networking.GlobalReceiverCallBack;
 import org.servalproject.mid.networking.NetworkInfo;
+import org.servalproject.mid.networking.receivers.Session;
 import org.servalproject.servalchat.R;
 
 /**
@@ -34,7 +38,8 @@ public class BlueToothInfo extends NetworkInfo {
 
 	@Override
 	public void enable(Context context) {
-		control.requestDiscoverable(context);
+		//control.requestDiscoverable(context);
+		control.adapter.enable();
 	}
 
 	@Override

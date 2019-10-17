@@ -53,6 +53,7 @@ public abstract class ObservedRecyclerView<T, H extends BasicViewHolder>
 		this.observerSet = observerSet;
 	}
 
+	// link observers created in Networks to notify for any changing in UI as well
 	public void setObserverSet(ListObserverSet<T> observerSet) {
 		this.observerSet = observerSet;
 	}

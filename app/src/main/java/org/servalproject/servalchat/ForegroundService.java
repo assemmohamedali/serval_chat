@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.servalproject.servalchat.navigation.MainActivity;
 import org.servalproject.servalchat.navigation.Navigation;
@@ -45,7 +46,6 @@ public class ForegroundService extends Service {
 				notificationBuilder = new NotificationCompat.Builder(this);
 			}
 
-
 			notificationBuilder.setSmallIcon(R.mipmap.serval_head);
 			notificationBuilder.setContentTitle(getString(R.string.foreground_title));
 			notificationBuilder.setContentText(getString(R.string.foreground_text));
@@ -57,6 +57,7 @@ public class ForegroundService extends Service {
 			this.startForeground(-1, notification);
 			return START_STICKY;
 		} else {
+
 			stopForeground(true);
 			stopSelf();
 			return START_NOT_STICKY;

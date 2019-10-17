@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import org.servalproject.mid.Serval;
+import org.servalproject.mid.networking.receivers.Session;
 import org.servalproject.servalchat.BuildConfig;
 import org.servalproject.servalchat.R;
 import org.servalproject.servaldna.ServalDFailureException;

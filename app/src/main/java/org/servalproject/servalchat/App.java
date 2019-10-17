@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +14,9 @@ import android.util.Log;
 
 import org.servalproject.mid.SelfUpdater;
 import org.servalproject.mid.Serval;
+import org.servalproject.mid.networking.GlobalReceiver;
 import org.servalproject.mid.networking.Networks;
+import org.servalproject.mid.networking.receivers.DynamicReceiver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +33,9 @@ import java.io.StringWriter;
 public class App extends Application {
 
 	private static boolean testing = false;
+	private BroadcastReceiver receiver;
+	GlobalReceiver mReceiveer;
+
 	public static boolean isTesting(){
 		return testing;
 	}
@@ -95,6 +101,8 @@ public class App extends Application {
 
 		// always start our daemon thread
 		Serval serval = Serval.start(this);
+		mReceiveer = new GlobalReceiver();
+		receiver = DynamicReceiver.with(mReceiveer).register(this);
 		Networks.init(serval);
 		Notifications.init(serval, this);
 		if (testing && "alpha".equals(BuildConfig.ReleaseType))

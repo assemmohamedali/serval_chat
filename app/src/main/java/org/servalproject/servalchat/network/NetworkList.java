@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,10 @@ public class NetworkList extends ObservedRecyclerView<NetworkInfo, NetworkList.N
 		setHasFixedSize(true);
 		RecyclerHelper.createLayoutManager(this, true, false);
 		RecyclerHelper.createDivider(this);
+
 		networks = Networks.getInstance();
 		setObserverSet(networks.observers);
+
 	}
 
 	@Override

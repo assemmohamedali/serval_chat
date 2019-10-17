@@ -6,12 +6,13 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import org.servalproject.mid.Serval;
+import org.servalproject.mid.networking.receivers.Session;
 import org.servalproject.servalchat.R;
 
 /**
  * Created by jeremy on 2/11/16.
  */
-public class WifiClient extends NetworkInfo{
+public class WifiClient extends NetworkInfo {
 	private WifiManager manager;
 	private static final String TAG = "WifiClient";
 
