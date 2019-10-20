@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 
+	// usualy used for UI to determine how many networks methods available (bl - wifi - hotspot)
 	public final List<NetworkInfo> networks = new ArrayList<>();
 	private static final String TAG = "Networks";
 	private static final String WIFI_AP_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_AP_STATE_CHANGED";
@@ -31,6 +33,7 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 	private final Serval serval;
 	public final WifiClient wifiClient;
 	public final Hotspot wifiHotspot;
+	public final WifiDirect wifiDirect;
 	public WifiAware wifiAware;
 	// list of observers for network info [WIFI - BL - Hotstpo]
 	public final ListObserverSet<NetworkInfo> observers;
@@ -47,6 +50,7 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 		Session.setmGlobalReceiverCallback(this);
 		this.wifiClient = new WifiClient(serval);
 		this.wifiHotspot = Hotspot.getHotspot(serval);
+		this.wifiDirect = WifiDirect.getWifiDirect(serval);
 
 		this.flightModeObserver = new FlightModeObserver(
 				this,
@@ -69,6 +73,9 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 		if (wifiHotspot!=null)
 			wifiHotspot.observers.addBackground(this);
 
+		if(wifiDirect !=null)
+			wifiDirect.observers.addBackground(this);
+
 		blueTooth = BlueToothControl.getBlueToothControl(serval, serval.selector, serval.server.getMdpPort());
 		if (blueTooth != null) {
 			blueTooth.onEnableChanged();
@@ -76,11 +83,17 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 			blueTooth.networkInfo.observers.addBackground(this);
 		}
 		networks.add(wifiClient);
+		networks.add(wifiDirect);
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			this.wifiAware = WifiAware.getWifiAware(serval, serval.selector, serval.server.getMdpPort());
 		}
 		if (wifiHotspot!=null)
 			networks.add(wifiHotspot);
+
+		/*if(widiDirect !=null )
+			networks.add(widiDirect);*/
+
 		flightModeObserver.register();
 	}
 
@@ -102,6 +115,7 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 		String name = networkInfo.getRadioName();
 		if (name == null)
 			return true;
+
 
 		for (String allowed: flightModeObserver.flightModeToggleable.split(",")) {
 			if (name.equals(allowed))
@@ -146,6 +160,9 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 
 	@Override
 	public void onCallBackReceived(Context context, Intent intent) {
+		/*if(wifiHotspot == null || blueTooth == null || wifiDirect == null)
+			return;*/
+
 		String action = intent.getAction();
 		switch(action) {
 			case WifiManager.WIFI_STATE_CHANGED_ACTION:
@@ -171,6 +188,9 @@ public class Networks implements Observer<NetworkInfo>, GlobalReceiverCallBack {
 				break;
 			case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
 				blueTooth.scanner.onScanModeChanged(intent);
+				break;
+			case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION:
+				wifiDirect.onStateChanged(intent);
 				break;
 		}
 	}
